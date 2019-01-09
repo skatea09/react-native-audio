@@ -54,7 +54,7 @@ RCT_EXPORT_MODULE();
           [_audioRecorder updateMeters];
           float _currentMetering = [_audioRecorder averagePowerForChannel: 0];
           [body setObject:[NSNumber numberWithFloat:_currentMetering] forKey:@"currentMetering"];
-   
+
           float _currentPeakMetering = [_audioRecorder peakPowerForChannel:0];
           [body setObject:[NSNumber numberWithFloat:_currentPeakMetering] forKey:@"currentPeakMetering"];
       }
@@ -86,7 +86,7 @@ RCT_EXPORT_MODULE();
   }
     uint64_t audioFileSize = 0;
     audioFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:[_audioFileURL path] error:nil] fileSize];
-  
+
   [self.bridge.eventDispatcher sendAppEventWithName:AudioRecorderEventFinished body:@{
       @"base64":base64,
       @"duration":@(_currentTime),
@@ -94,7 +94,7 @@ RCT_EXPORT_MODULE();
       @"audioFileURL": [_audioFileURL absoluteString],
       @"audioFileSize": @(audioFileSize)
     }];
-    
+
     // This will resume the music/audio file that was playing before the recording started
     // Without this piece of code, the music/audio will just be stopped
     NSError *error;
@@ -183,7 +183,7 @@ RCT_EXPORT_METHOD(prepareRecordingAtPath:(NSString *)path sampleRate:(float)samp
     }
   }
 
-    
+
   // Set sample rate from options
   _audioSampleRate = [NSNumber numberWithFloat:sampleRate];
 
@@ -292,6 +292,16 @@ RCT_EXPORT_METHOD(requestAuthorization:(RCTPromiseResolveBlock)resolve
       resolve(@NO);
     }
   }];
+}
+
+RCT_EXPORT_METHOD(getCurrentTime:(RCTPromiseResolveBlock)resolve
+                  rejecter:(__unused RCTPromiseRejectBlock)reject)
+{
+    if (_audioRecorder) {
+        resolve(@(_audioRecorder.currentTime));
+    } else {
+        resolve(@"NO");
+    }
 }
 
 - (NSString *)getPathForDirectory:(int)directory
